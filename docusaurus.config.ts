@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'React-Admin 项目指南',
-  tagline: 'Dinosaurs are cool',
+  tagline: '现在的约束，是未来的自由',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -15,15 +15,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://webghan.github.io/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'WebGhan', // Usually your GitHub org/user name.
+  projectName: 'Linian-React-Admin-Guide', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -85,11 +85,11 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: '文档',
         },
         // {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/WebGhan/Linian-React-Admin-Guide',
           label: 'GitHub',
           position: 'right',
         },
@@ -102,7 +102,7 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
+              label: '项目指南',
               to: '/docs/intro',
             },
           ],
@@ -112,12 +112,12 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/WebGhan/Linian-React-Admin-Guide',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} GaoHan, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} WebGhan, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
