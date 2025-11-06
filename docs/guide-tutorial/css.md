@@ -1,8 +1,8 @@
 # CSS 样式
 
-## 使用 CSS 文件
+## 直接使用 CSS
 
-直接导入 CSS 文件以使用：
+导入 CSS 文件可以直接使用样式：
 
 ```css title="example.css"
 .title {
