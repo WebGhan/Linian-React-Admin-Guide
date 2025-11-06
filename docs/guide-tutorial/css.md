@@ -2,14 +2,14 @@
 
 ## 直接使用 CSS
 
-导入 CSS 文件可以直接使用样式：
-
 ```css title="example.css"
 .title {
     text-align: center;
     font-weight: bold;
 }
 ```
+
+导入 CSS 文件可以直接使用样式：
 
 ```jsx
 import './example.css'

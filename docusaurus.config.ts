@@ -61,10 +61,10 @@ const config: Config = {
     },
     navbar: {
       title: 'React-Admin 项目指南',
-      logo: {
-        alt: 'React-Admin Guid Logo',
-        src: 'img/logo.svg',
-      },
+      // logo: {
+      //   alt: 'React-Admin Guid Logo',
+      //   src: 'img/logo.svg',
+      // },
       items: [
         // {
         //   type: 'docSidebar',
@@ -81,34 +81,6 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: '概览',
-              to: '/docs/intro',
-            },
-            {
-              label: '开发环境',
-              to: '/docs/category/开发环境',
-            },
-            {
-              label: '规范',
-              to: '/docs/category/规范',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/WebGhan/Linian-React-Admin-Guide',
-            },
-          ],
-        },
-      ],
       copyright: `Copyright © ${new Date().getFullYear()} WebGhan, Inc. Built with Docusaurus.`,
     },
     prism: {
