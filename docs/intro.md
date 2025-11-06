@@ -2,46 +2,23 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# 概览
 
-Let's discover **Docusaurus in less than 5 minutes**.
+## 简介
 
-## Getting Started
+基于 React 及其主流生态构建的后台管理项目。
 
-Get started by **creating a new site**.
+## 项目基础构成
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+- 编程语言：**TypeScript** https://www.typescriptlang.org/
+- 框架：**React** https://react.dev/
+- 路由：**React-Router** https://reactrouter.com/
+- 状态管理：**Zustand** https://zustand-demo.pmnd.rs/
+- 异步状态管理：**TanStack Query** https://tanstack.com/query/latest/docs/framework/react/overview
+- UI 组件库：**Ant Design** https://ant.design/
+- 脚手架工具：**Vite** https://vitejs.dev/
+- 包管理工具：**pnpm** https://pnpm.io/
 
-### What you'll need
+## 兼容性要求
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+三年以内版本的主流浏览器（Chrome，Edge，Safari）

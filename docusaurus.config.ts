@@ -44,22 +44,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
+            'https://github.com/WebGhan/Linian-React-Admin-Guide/tree/main/',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -81,13 +66,12 @@ const config: Config = {
         src: 'img/logo.svg',
       },
       items: [
-        {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: '文档',
-        },
-        // {to: '/blog', label: 'Blog', position: 'left'},
+        // {
+        //   type: 'docSidebar',
+        //   sidebarId: 'tutorialSidebar',
+        //   position: 'left',
+        //   label: '文档',
+        // },
         {
           href: 'https://github.com/WebGhan/Linian-React-Admin-Guide',
           label: 'GitHub',
@@ -102,8 +86,16 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: '项目指南',
+              label: '概览',
               to: '/docs/intro',
+            },
+            {
+              label: '开发环境',
+              to: '/docs/category/开发环境',
+            },
+            {
+              label: '规范',
+              to: '/docs/category/规范',
             },
           ],
         },
