@@ -112,7 +112,7 @@ export type {ExampleTemplate, ExampleTemplateForm, ExampleTemplateQueryParams};
  */
 export function getExampleTemplates(params?: ExampleTemplateQueryParams) {
   return request<ApiResponsePage<ExampleTemplate>>({
-    url: '/example/example',
+    url: '/example/template',
     method: 'GET',
     params,
   });
@@ -123,7 +123,7 @@ export function getExampleTemplates(params?: ExampleTemplateQueryParams) {
  */
 export function getExampleTemplate(id: number) {
   return request<ExampleTemplate>({
-    url: `/example/example/${id}`,
+    url: `/example/template/${id}`,
     method: 'GET',
   });
 }
@@ -407,7 +407,7 @@ import {request} from '@/common/http/request.ts';
  */
 export function getExampleTemplates(params?: ExampleTemplateQueryParams) {
   return request<ApiResponsePage<ExampleTemplate>>({
-    url: '/example/example',
+    url: '/example/template',
     method: 'GET',
     params,
   });
@@ -418,7 +418,7 @@ export function getExampleTemplates(params?: ExampleTemplateQueryParams) {
  */
 export function getExampleTemplate(id: number) {
   return request<ExampleTemplate>({
-    url: `/example/example/${id}`,
+    url: `/example/template/${id}`,
     method: 'GET',
   });
 }
@@ -428,7 +428,7 @@ export function getExampleTemplate(id: number) {
  */
 export function createExampleTemplate(data: ExampleTemplateForm) {
   return request({
-    url: '/example/example',
+    url: '/example/template',
     method: 'POST',
     data,
   });
@@ -439,7 +439,7 @@ export function createExampleTemplate(data: ExampleTemplateForm) {
  */
 export function updateExampleTemplate({id, data}: { id: number; data: ExampleTemplateForm }) {
   return request({
-    url: `/example/example/${id}`,
+    url: `/example/template/${id}`,
     method: 'POST',
     data,
   });
@@ -450,7 +450,7 @@ export function updateExampleTemplate({id, data}: { id: number; data: ExampleTem
  */
 export function deleteExampleTemplate(id: number) {
   return request({
-    url: `/example/example/${id}/delete`,
+    url: `/example/template/${id}/delete`,
     method: 'POST',
   });
 }
