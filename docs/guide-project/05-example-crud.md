@@ -157,7 +157,7 @@ TanStack Query 可以帮我们管理响应数据（异步状态管理），我�
  */
 export function useExampleTemplates(params?: ExampleTemplateQueryParams) {
   return useQuery({
-    queryKey: ['/template/template', params],
+    queryKey: ['/example/template', params],
     queryFn: () => getExampleTemplates(params),
     select: (data) => data.data,
     placeholderData: keepPreviousData,
@@ -174,7 +174,7 @@ export function useCreateExampleTemplate() {
     onSuccess: () => {
       // 将列表数据设为过期
       // highlight-start
-      queryClient.invalidateQueries({queryKey: ['/template/template']});
+      queryClient.invalidateQueries({queryKey: ['/example/template']});
       // highlight-end
     },
   });
@@ -474,7 +474,7 @@ import type {ExampleTemplateQueryParams} from '@/types/example/template.ts';
  */
 export function useExampleTemplates(params?: ExampleTemplateQueryParams) {
   return useQuery({
-    queryKey: ['/template/template', params],
+    queryKey: ['/example/template', params],
     queryFn: () => getExampleTemplates(params),
     select: (data) => data.data,
     placeholderData: keepPreviousData,
@@ -486,7 +486,7 @@ export function useExampleTemplates(params?: ExampleTemplateQueryParams) {
  */
 export function useExampleTemplate(id: number | null) {
   return useQuery({
-    queryKey: [`/template/template/${id}`],
+    queryKey: [`/example/template/${id}`],
     queryFn: () => getExampleTemplate(id!),
     enabled: !!id,
     select: (data) => data.data,
@@ -501,7 +501,7 @@ export function useCreateExampleTemplate() {
   return useMutation({
     mutationFn: createExampleTemplate,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['/template/template']});
+      queryClient.invalidateQueries({queryKey: ['/example/template']});
     },
   });
 }
@@ -514,7 +514,7 @@ export function useUpdateExampleTemplate() {
   return useMutation({
     mutationFn: updateExampleTemplate,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['/template/template']});
+      queryClient.invalidateQueries({queryKey: ['/example/template']});
     },
   });
 }
@@ -527,8 +527,8 @@ export function useDeleteExampleTemplate() {
   return useMutation({
     mutationFn: deleteExampleTemplate,
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({queryKey: ['/template/template']});
-      queryClient.removeQueries({queryKey: [`/template/template/${id}`]});
+      queryClient.invalidateQueries({queryKey: ['/example/template']});
+      queryClient.removeQueries({queryKey: [`/example/template/${id}`]});
     },
   });
 }
