@@ -18,6 +18,6 @@ function Example() {
 
 ```css
 .background {
-    background-image: url('/src/assets/images/example.png');
+  background-image: url('/src/assets/images/example.png');
 }
 ```

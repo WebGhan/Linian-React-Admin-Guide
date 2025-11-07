@@ -7,6 +7,8 @@
 ├── public                # 静态资源(不参与编译，构建时文件直接复制到项目根目录)
 ├── src
 │   ├── api               # api 请求
+│   │   ├── query-fn      # 请求方法
+│   │   └── query-hooks   # 请求 Hooks
 │   ├── assets            # 静态资源(参与编译)，可用于存放项目中引用的图片、字体等文件
 │   │   ├── font          # 存放项目中所引用的字体
 │   │   ├── iconfont      # iconfont 字体图标文件

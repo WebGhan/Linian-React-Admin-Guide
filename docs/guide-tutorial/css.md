@@ -4,8 +4,8 @@
 
 ```css title="example.css"
 .title {
-    text-align: center;
-    font-weight: bold;
+  text-align: center;
+  font-weight: bold;
 }
 ```
 
@@ -35,7 +35,7 @@ Button__button--1a2b3），确保每个类名仅在当前模块（文件）内�
 
 ```css title="example.module.css"
 .red {
-    color: red;
+  color: red;
 }
 ```
 
@@ -56,12 +56,12 @@ function example() {
 ```css
 /* 用 :global() 包裹需要全局生效的选择器 */
 :global(.ant-btn) {
-    background: red; /* 覆盖 Antd 按钮的背景色 */
+  background: red; /* 覆盖 Antd 按钮的背景色 */
 }
 
 /* 也可以嵌套使用，限制作用范围 */
 .container :global(.ant-btn) {
-    background: red /* 仅覆盖 .container 内的 Antd 按钮 */
+  background: red /* 仅覆盖 .container 内的 Antd 按钮 */
 }
 ```
 

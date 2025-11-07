@@ -9,6 +9,7 @@
 首先，我们要定义数据实体类型，表单类型。
 
 目录如下：
+
 ```
 ├── src
 │   ├── types                 # 全局类型
@@ -18,6 +19,8 @@
 
 示例模版有 id、title（标题）、description（描述）、created_at（创建时间） 和 updated_at（更新时间） 字段。
 
+#### 实体类型
+
 我们定义示例模版 `ExampleTemplate` 的类型：
 
 ```ts
@@ -25,16 +28,16 @@
  * 示例模版
  */
 type ExampleTemplate = {
-    id: number;
+  id: number;
 
-    /** 标题 */
-    title: string;
+  /** 标题 */
+  title: string;
 
-    /** 描述 */
-    description: string;
+  /** 描述 */
+  description: string;
 
-    created_at: string;
-    updated_at: string;
+  created_at: string;
+  updated_at: string;
 };
 ```
 
@@ -47,11 +50,11 @@ type ExampleTemplate = {
  * 示例模版表单
  */
 type ExampleTemplateForm = {
-    /** 标题 */
-    title: string;
+  /** 标题 */
+  title: string;
 
-    /** 描述 */
-    description?: string;
+  /** 描述 */
+  description?: string;
 };
 ```
 
@@ -66,8 +69,8 @@ type ExampleTemplateForm = {
  * 示例模版查询参数
  */
 type ExampleTemplateQueryParams = RequestPagination & {
-    /** 标题 */
-    title?: string;
+  /** 标题 */
+  title?: string; // 查询参数是可选的，所以我们要加上 ?
 };
 ```
 
@@ -78,74 +81,326 @@ type ExampleTemplateQueryParams = RequestPagination & {
 最后，通过 `export type` 导出我们的类型：
 
 ```ts
-export type { ExampleTemplate, ExampleTemplateForm, ExampleTemplateQueryParams };
+export type {ExampleTemplate, ExampleTemplateForm, ExampleTemplateQueryParams};
 ```
 
 ### API 请求
 
-### 高级表格组件 ProTable
+项目使用了 [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) 管理 API
+请求以及请求返回的数据。我们需要分别创建**请求方法**和**请求 Hooks**。
 
-### 处理新建
+目录如下：
 
-### 处理修改
+```
+├── src
+│   ├── api                      # api 请求
+│   │   ├── query-fn             # 请求方法
+│   │   │   └── example          # 业务模块
+│   │   │       └── template.ts  # 示例模版请求方法
+│   │   └── query-hooks          # 请求 Hooks
+│   │       └── example          # 业务模块
+│   │           └── template.ts  # 示例模版请求 Hooks
+```
 
-### 处理删除
+#### 请求方法
+
+项目使用了 [Axios](https://axios-http.com) 来封装 Http 请求方法 `request`，它接受一个范型作为响应结果的类型。
+
+```ts
+/**
+ * 获取 示例模版（分页）
+ */
+export function getExampleTemplates(params?: ExampleTemplateQueryParams) {
+  return request<ApiResponsePage<ExampleTemplate>>({
+    url: '/example/example',
+    method: 'GET',
+    params,
+  });
+}
+
+/**
+ * 获取 单个示例模版
+ */
+export function getExampleTemplate(id: number) {
+  return request<ExampleTemplate>({
+    url: `/example/example/${id}`,
+    method: 'GET',
+  });
+}
+
+// ...其他参考代码总览
+```
+
+如果我们的响应结果是带分页的，则需要再包裹一个 `ApiResponsePage` 类型：
+
+```ts title="src/types/common/result.ts"
+/**
+ * api 响应结果(分页)
+ */
+interface ApiResponsePage<T> {
+  /** 数据 */
+  data: T[];
+
+  /** 分页信息 */
+  meta?: ApiResponseMeta;
+}
+```
+
+#### 请求 Hooks
+
+TanStack Query 可以帮我们管理响应数据（异步状态管理），我们发送创建请求成功后，将列表数据设为过期，TanStack Query
+会自动发送请求更新数据：
+
+```ts
+/**
+ * 获取 示例模版
+ */
+export function useExampleTemplates(params?: ExampleTemplateQueryParams) {
+  return useQuery({
+    queryKey: ['/template/template', params],
+    queryFn: () => getExampleTemplates(params),
+    select: (data) => data.data,
+    placeholderData: keepPreviousData,
+  });
+}
+
+/**
+ * 创建 示例模版
+ */
+export function useCreateExampleTemplate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createExampleTemplate,
+    onSuccess: () => {
+      // 将列表数据设为过期
+      // highlight-start
+      queryClient.invalidateQueries({queryKey: ['/template/template']});
+      // highlight-end
+    },
+  });
+}
+
+// ...其他参考代码总览
+```
+
+### 视图组件
+
+目录如下：
+
+```
+├── src
+│   ├── views                       
+│   │   └── example                  # 业务模块
+│   │       └── template            
+│   │           ├── components
+│   │           │   ├── Creator.tsx  # 创建表单
+│   │           │   └── Editor.tsx   # 编辑表单
+│   │           └── index.tsx        # 示例模版主视图组件
+```
+
+视图组件的名称以 View 结尾，可以防止与类型定义冲突：
+
+```tsx title="src/views/example/template/index.tsx"
+function ExampleTemplateView() {
+    // ...
+}
+```
+
+#### 高级表格组件 ProTable
+
+本项目封装了一个高级表格组件 `<ProTable>` ，使用高级表格组件我们只需要定义表格列、筛选栏表单、工具栏即可，无需关注他们的交互及样式，简化了很多样板代码。
+
+```tsx
+<ProTable<ExampleTemplate, ExampleTemplateQueryParams>
+  tableTitle="示例模版"
+  columns={columns} // 表格列
+  tableToolBarItems={tableToolBarItems} // 工具栏
+  filterBarItems={filterBarItems} // 筛选栏
+  useQueryHook={useQueryHook} // 查询方法
+/>
+```
+
+ProTable 需要我们传入一个查询方法，该方法接受 pagination（分页）、filter（筛选）参数，返回查询 Hook：
+
+```tsx
+function useQueryHook({pagination, filter}: QueryDataParams<ExampleTemplateQueryParams>) {
+  return useExampleTemplates({
+    page: pagination?.current,
+    per_page: pagination?.pageSize,
+    ...filter,
+  });
+}
+```
+
+表格列定义：
+
+```tsx
+const columns: ProTableColumnsType<ExampleTemplate> = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+    width: 80,
+    hidden: true, // 当 hidden 为 true 时表示默认隐藏
+  },
+  {
+    title: '标题',
+    dataIndex: 'title',
+    key: 'title',
+    width: 300,
+  },
+  
+  // ...
+];
+```
+
+筛选栏：
+
+```tsx
+const filterBarItems: ReactNode[] = [
+  <Form.Item<ExampleTemplateQueryParams>
+    name="title"
+    label="标题"
+  >
+    <Input
+      placeholder="请输入"
+      allowClear
+    />
+  </Form.Item>,
+];
+```
+
+表格工具栏：
+
+```tsx
+const tableToolBarItems: ReactNode = (
+  <>
+    <Button
+      type="primary"
+      icon={<PlusOutlined/>}
+      onClick={() => creatorRef.current?.open()}
+    >
+      添加
+    </Button>
+  </>
+);
+```
+
+### 路由
+
+最后，我们要把视图组件挂在到路由上，这样我们就能访问页面了。
+
+目录如下：
+
+```
+├── src
+│   ├── router                # 全局路由
+│   │   └── routes            # 路由定义模块
+│   │       ├── example.tsx   # 示例路由
+│   │       └── index.tsx
+```
+
+注意：导入组件时，我们使用 [`lazy()`](https://react.dev/reference/react/lazy) 方法对视图组件进行懒加载处理，可以优化我们项目访问的速度。
+
+```tsx title="src/router/routes/example.tsx"
+// highlight-start
+const ExampleTemplateView = lazy(() => import('@/views/example/template'));
+// highlight-end
+
+const example: AppRoute[] = [
+  {
+    path: 'example',
+    element: <BasicLayout />,
+    handle: { title: '配送', icon: <AppstoreOutlined /> },
+    children: [
+      {
+        path: 'template',
+        element: <ExampleTemplateView />,
+        handle: { title: '运费模版' },
+      },
+    ],
+  },
+];
+```
+
+然后将定义好的路由导入到 index 路由中：
+
+```tsx title="src/router/routes/index.tsx"
+const routes: AppRoute[] = [
+    {
+        path: '/',
+        element: <Root />,
+        redirect: 'home',
+        children: [
+            // ...
+            
+            // highlight-start
+            ...example,
+            // highlight-end
+            
+            // ...
+        ],
+    },
+    
+    // ...
+];
+```
 
 ## 代码总览
 
 ### type
 
 ```ts title="src/types/example/template.ts"
-import type { RequestPagination } from '@/types/common/requestParam.ts';
+import type {RequestPagination} from '@/types/common/requestParam.ts';
 
 /**
  * 示例模版
  */
 type ExampleTemplate = {
-    id: number;
+  id: number;
 
-    /** 标题 */
-    title: string;
+  /** 标题 */
+  title: string;
 
-    /** 描述 */
-    description: string;
+  /** 描述 */
+  description: string;
 
-    created_at: string;
-    updated_at: string;
+  created_at: string;
+  updated_at: string;
 };
 
 /**
  * 示例模版表单
  */
 type ExampleTemplateForm = {
-    /** 标题 */
-    title: string;
+  /** 标题 */
+  title: string;
 
-    /** 描述 */
-    description?: string;
+  /** 描述 */
+  description?: string;
 };
 
 /**
  * 示例模版查询参数
  */
 type ExampleTemplateQueryParams = RequestPagination & {
-    /** 标题 */
-    title?: string;
+  /** 标题 */
+  title?: string;
 };
 
-export type { ExampleTemplate, ExampleTemplateForm, ExampleTemplateQueryParams };
+export type {ExampleTemplate, ExampleTemplateForm, ExampleTemplateQueryParams};
 ```
 
 ### query-fn
 
 ```ts title="src/api/query-fn/example/template.ts"
-import type { ApiResponsePage } from '@/types/common/result.ts';
+import type {ApiResponsePage} from '@/types/common/result.ts';
 import type {
   ExampleTemplate,
   ExampleTemplateForm,
   ExampleTemplateQueryParams,
 } from '@/types/example/template';
-import { request } from '@/common/http/request.ts';
+import {request} from '@/common/http/request.ts';
 
 /**
  * 获取 示例模版
@@ -182,7 +437,7 @@ export function createExampleTemplate(data: ExampleTemplateForm) {
 /**
  * 更新 示例模版
  */
-export function updateExampleTemplate({ id, data }: { id: number; data: ExampleTemplateForm }) {
+export function updateExampleTemplate({id, data}: { id: number; data: ExampleTemplateForm }) {
   return request({
     url: `/example/example/${id}`,
     method: 'POST',
@@ -211,8 +466,8 @@ import {
   getExampleTemplates,
   updateExampleTemplate,
 } from '@/api/query-fn/example/template.ts';
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ExampleTemplateQueryParams } from '@/types/example/template.ts';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import type {ExampleTemplateQueryParams} from '@/types/example/template.ts';
 
 /**
  * 获取 示例模版
@@ -246,7 +501,7 @@ export function useCreateExampleTemplate() {
   return useMutation({
     mutationFn: createExampleTemplate,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/template/template'] });
+      queryClient.invalidateQueries({queryKey: ['/template/template']});
     },
   });
 }
@@ -259,7 +514,7 @@ export function useUpdateExampleTemplate() {
   return useMutation({
     mutationFn: updateExampleTemplate,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/template/template'] });
+      queryClient.invalidateQueries({queryKey: ['/template/template']});
     },
   });
 }
@@ -272,8 +527,8 @@ export function useDeleteExampleTemplate() {
   return useMutation({
     mutationFn: deleteExampleTemplate,
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['/template/template'] });
-      queryClient.removeQueries({ queryKey: [`/template/template/${id}`] });
+      queryClient.invalidateQueries({queryKey: ['/template/template']});
+      queryClient.removeQueries({queryKey: [`/template/template/${id}`]});
     },
   });
 }
@@ -282,14 +537,14 @@ export function useDeleteExampleTemplate() {
 ### table
 
 ```tsx title="src/views/example/index.tsx"
-import type { ProTableColumnsType } from '@/components/pro/ProTable/types.ts';
-import ProTable, { type QueryDataParams } from '@/components/pro/ProTable';
-import { type ReactNode, useRef } from 'react';
-import Creator, { type CreatorRef } from '@/views/example/template/components/Creator.tsx';
-import Editor, { type EditorRef } from '@/views/example/template/components/Editor.tsx';
-import { Button, Dropdown, Form, Input } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import type { ExampleTemplate, ExampleTemplateQueryParams } from '@/types/example/template.ts';
+import type {ProTableColumnsType} from '@/components/pro/ProTable/types.ts';
+import ProTable, {type QueryDataParams} from '@/components/pro/ProTable';
+import {type ReactNode, useRef} from 'react';
+import Creator, {type CreatorRef} from '@/views/example/template/components/Creator.tsx';
+import Editor, {type EditorRef} from '@/views/example/template/components/Editor.tsx';
+import {Button, Dropdown, Form, Input} from 'antd';
+import {PlusOutlined} from '@ant-design/icons';
+import type {ExampleTemplate, ExampleTemplateQueryParams} from '@/types/example/template.ts';
 import {
   useDeleteExampleTemplate,
   useExampleTemplates,
@@ -302,7 +557,7 @@ function ExampleTemplateView() {
   const deleteExampleTemplate = useDeleteExampleTemplate();
   const confirmModal = useCountdownConfirm();
 
-  function useQueryHook({ pagination, filter }: QueryDataParams<ExampleTemplateQueryParams>) {
+  function useQueryHook({pagination, filter}: QueryDataParams<ExampleTemplateQueryParams>) {
     return useExampleTemplates({
       page: pagination?.current,
       per_page: pagination?.pageSize,
@@ -358,7 +613,7 @@ function ExampleTemplateView() {
           size="small"
           trigger={['click']}
           menu={{
-            style: { minWidth: '100px' },
+            style: {minWidth: '100px'},
             items: [
               {
                 key: 'delete',
@@ -393,7 +648,7 @@ function ExampleTemplateView() {
     <>
       <Button
         type="primary"
-        icon={<PlusOutlined />}
+        icon={<PlusOutlined/>}
         onClick={() => creatorRef.current?.open()}
       >
         添加
@@ -423,10 +678,10 @@ export default ExampleTemplateView;
 ### creator
 
 ```tsx title="src/views/example/template/components/Creator.tsx"
-import { Button, Flex, Form, Input, Modal } from 'antd';
-import { type Ref, useImperativeHandle, useState } from 'react';
-import { useCreateExampleTemplate } from '@/api/query-hooks/example/template.ts';
-import type { ExampleTemplateForm } from '@/types/example/template.ts';
+import {Button, Flex, Form, Input, Modal} from 'antd';
+import {type Ref, useImperativeHandle, useState} from 'react';
+import {useCreateExampleTemplate} from '@/api/query-hooks/example/template.ts';
+import type {ExampleTemplateForm} from '@/types/example/template.ts';
 
 type CreatorRef = {
   /** 打开 Modal 弹窗 */
@@ -437,7 +692,7 @@ type CreatorProps = {
   ref: Ref<CreatorRef>;
 };
 
-function Creator({ ref }: CreatorProps) {
+function Creator({ref}: CreatorProps) {
   const [form] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -469,16 +724,16 @@ function Creator({ ref }: CreatorProps) {
       confirmLoading={createExampleTemplate.isPending}
       onOk={() => form.submit()}
       onCancel={() => setIsModalOpen(false)}
-      footer={(_, { OkBtn, CancelBtn }) => (
+      footer={(_, {OkBtn, CancelBtn}) => (
         <Flex gap={8}>
           <Button
-            style={{ marginRight: 'auto' }}
+            style={{marginRight: 'auto'}}
             onClick={() => form.resetFields()}
           >
             重置
           </Button>
-          <CancelBtn />
-          <OkBtn />
+          <CancelBtn/>
+          <OkBtn/>
         </Flex>
       )}
     >
@@ -492,15 +747,15 @@ function Creator({ ref }: CreatorProps) {
         <Form.Item<ExampleTemplateForm>
           label="标题"
           name="title"
-          rules={[{ required: true, message: '请填写标题' }]}
+          rules={[{required: true, message: '请填写标题'}]}
         >
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item<ExampleTemplateForm>
           label="描述"
           name="description"
         >
-          <Input />
+          <Input/>
         </Form.Item>
       </Form>
     </Modal>
@@ -509,19 +764,19 @@ function Creator({ ref }: CreatorProps) {
 
 export default Creator;
 
-export type { CreatorRef };
+export type {CreatorRef};
 ```
 
 ### editor
 
 ```tsx title="src/views/example/template/components/Editor.tsx"
-import { type Ref, useEffect, useImperativeHandle, useState } from 'react';
-import { Form, Input, Modal } from 'antd';
+import {type Ref, useEffect, useImperativeHandle, useState} from 'react';
+import {Form, Input, Modal} from 'antd';
 import {
   useExampleTemplate,
   useUpdateExampleTemplate,
 } from '@/api/query-hooks/example/template.ts';
-import type { ExampleTemplateForm } from '@/types/example/template.ts';
+import type {ExampleTemplateForm} from '@/types/example/template.ts';
 
 type EditorRef = {
   /** 打开 Modal 弹窗 */
@@ -532,13 +787,13 @@ type EditorProps = {
   ref: Ref<EditorRef>;
 };
 
-function Editor({ ref }: EditorProps) {
+function Editor({ref}: EditorProps) {
   const [form] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [exampleTemplateId, setExampleTemplateId] = useState<number | null>(null);
 
-  const { data, isFetching } = useExampleTemplate(exampleTemplateId);
+  const {data, isFetching} = useExampleTemplate(exampleTemplateId);
   const updateUpdateExampleTemplate = useUpdateExampleTemplate();
 
   useImperativeHandle(ref, () => {
@@ -562,7 +817,7 @@ function Editor({ ref }: EditorProps) {
   function onFinish(e: ExampleTemplateForm) {
     if (exampleTemplateId !== null) {
       updateUpdateExampleTemplate.mutate(
-        { id: exampleTemplateId, data: e },
+        {id: exampleTemplateId, data: e},
         {
           onSuccess: () => {
             form.resetFields();
@@ -600,15 +855,15 @@ function Editor({ ref }: EditorProps) {
         <Form.Item<ExampleTemplateForm>
           label="标题"
           name="title"
-          rules={[{ required: true, message: '请填写标题' }]}
+          rules={[{required: true, message: '请填写标题'}]}
         >
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item<ExampleTemplateForm>
           label="描述"
           name="description"
         >
-          <Input />
+          <Input/>
         </Form.Item>
       </Form>
     </Modal>
@@ -617,5 +872,33 @@ function Editor({ ref }: EditorProps) {
 
 export default Editor;
 
-export type { EditorRef };
+export type {EditorRef};
+```
+
+### route
+
+```tsx title="src/router/routes/example.tsx"
+import type { AppRoute } from '@/router/types.ts';
+import BasicLayout from '@/layouts/basic-layout';
+import { lazy } from 'react';
+import { AppstoreOutlined } from '@ant-design/icons';
+
+const ExampleTemplateView = lazy(() => import('@/views/example/template'));
+
+const example: AppRoute[] = [
+  {
+    path: 'example',
+    element: <BasicLayout />,
+    handle: { title: '配送', icon: <AppstoreOutlined /> },
+    children: [
+      {
+        path: 'template',
+        element: <ExampleTemplateView />,
+        handle: { title: '运费模版' },
+      },
+    ],
+  },
+];
+
+export default example;
 ```
