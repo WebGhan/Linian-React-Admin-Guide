@@ -846,7 +846,7 @@ function Editor({ref}: EditorProps) {
       afterClose={handleReset}
     >
       <Form
-        name="exampleExampleTemplateEditor"
+        name="exampleTemplateEditor"
         form={form}
         layout="vertical"
         onFinish={onFinish}
