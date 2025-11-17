@@ -617,8 +617,8 @@ function ExampleTemplateView() {
             items: [
               {
                 key: 'delete',
-                onClick: () => handleDelete(record),
                 label: '删除',
+                onClick: () => handleDelete(record),
               },
             ],
           }}
